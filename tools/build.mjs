@@ -159,7 +159,7 @@ console.log(`\nCSP : ${inlineScripts.size} script(s) inline haché(s)`)
    Redirection par <meta refresh> UNIQUEMENT (pas de script inline → CSP
    stricte intacte ; le crawler WhatsApp ne suit pas la redirection et
    lit les balises OG). */
-const SITE_URL = 'https://velira.ma'   /* ← à remplacer par le domaine réel au lancement */
+const SITE_URL = 'https://velirashops.store'
 
 const slugFor = (name) =>
   String(name).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '')

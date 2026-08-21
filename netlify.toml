@@ -1,0 +1,21 @@
+# ============================================================
+# VELIRA — configuration Netlify
+# ============================================================
+# Les redirections (_redirects) et en-têtes (_headers) sont générés
+# dans dist/ par le script de build et lus automatiquement par Netlify.
+# Ne PAS les dupliquer ici.
+
+[build]
+  # Commande de build : minifie CSS/JS/HTML, hache les assets, génère les
+  # pages OG produit, calcule les hachages CSP.
+  command = "npm run build"
+
+  # Dossier publié = sortie du build (tools/build.mjs → dist/)
+  publish = "dist"
+
+[build.environment]
+  # esbuild 0.28+ requiert Node ≥ 18 ; on épingle Node 20 LTS.
+  NODE_VERSION = "20"
+
+# La branche de production (main) se configure côté dashboard Netlify :
+# Site configuration → Build & deploy → Continuous deployment → Production branch.
