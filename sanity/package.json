@@ -1,0 +1,21 @@
+{
+  "name": "velira-studio",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Sanity Studio du site VELIRA",
+  "scripts": {
+    "dev": "sanity dev",
+    "build": "sanity build ../studio -y",
+    "deploy": "sanity deploy",
+    "migrate": "node scripts/migrate-content.mjs",
+    "import-content": "sanity dataset import content.ndjson production --replace"
+  },
+  "dependencies": {
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "react-is": "^19.2.7",
+    "sanity": "^4.10.0",
+    "sanity-plugin-media": "^4.3.6",
+    "styled-components": "^6.1.15"
+  }
+}

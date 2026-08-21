@@ -1,0 +1,50 @@
+# ============================================================
+# VELIRA — en-têtes Netlify (cache + sécurité)
+# ============================================================
+
+# ---- Sécurité : appliquée à tout le site ----
+/*
+  X-Frame-Options: DENY
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: geolocation=(), microphone=(), camera=(), payment=()
+  Cross-Origin-Opener-Policy: same-origin
+  Content-Security-Policy: default-src 'self'; script-src 'self' __INLINE_SCRIPT_HASHES__; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://cdn.sanity.io; font-src 'self'; connect-src 'self' https://dvss1you.apicdn.sanity.io https://dvss1you.api.sanity.io; form-action 'self'; frame-ancestors 'none'; base-uri 'self'; object-src 'none'; upgrade-insecure-requests
+
+# ---- HTML : toujours revalidé (contenu et liens toujours frais) ----
+/
+  Cache-Control: public, max-age=0, must-revalidate
+/index.html
+  Cache-Control: public, max-age=0, must-revalidate
+/*.html
+  Cache-Control: public, max-age=0, must-revalidate
+
+# ---- Pages produit OG (aperçus WhatsApp) : toujours revalidées ----
+/produits/*
+  Cache-Control: public, max-age=0, must-revalidate
+  X-Robots-Tag: noindex
+
+# ---- content.json : secours hors-ligne, court cache ----
+/content.json
+  Cache-Control: public, max-age=300, must-revalidate
+
+# ---- Actifs à empreinte (nom haché) : cache 1 an, immuable ----
+/js/*
+  Cache-Control: public, max-age=31536000, immutable
+/css/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# ---- Polices : immuables (nom stable, contenu figé) ----
+/fonts/*
+  Cache-Control: public, max-age=31536000, immutable
+  Access-Control-Allow-Origin: *
+
+# ---- Images : immuables ----
+/images/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# ---- Studio Sanity : jamais indexé, pas de CSP stricte (app React) ----
+/studio/*
+  X-Robots-Tag: noindex
+  Content-Security-Policy: default-src 'self' https://*.sanity.io https://*.sanity.work; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://core.sanity-cdn.com https://*.sanity.io; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data: https:; connect-src 'self' https://*.sanity.io https://*.sanity.work wss://*.sanity.io; frame-ancestors 'none'
+  Cache-Control: public, max-age=0, must-revalidate

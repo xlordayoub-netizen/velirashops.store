@@ -1,0 +1,21 @@
+# Dépendances (réinstallables avec npm install)
+node_modules/
+sanity/node_modules/
+
+# Build (régénérable avec npm run build)
+dist/
+
+# Environnement
+.env
+.env.*
+
+# Fichier d'import Sanity (régénérable)
+sanity/content.ndjson
+
+# Rapports Lighthouse (régénérables)
+lh-*.json
+
+# Système
+.DS_Store
+Thumbs.db
+*.log

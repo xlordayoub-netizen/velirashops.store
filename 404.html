@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex">
+  <title>Page introuvable — VELIRA</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23111111'/%3E%3Ctext x='16' y='23' text-anchor='middle' font-family='Georgia, serif' font-size='20' fill='%23FFFFFF'%3EV%3C/text%3E%3C/svg%3E">
+  <link rel="stylesheet" href="fonts/fonts.css">
+  <style>
+    :root{--ink:#111;--paper:#fff;--slate:#666;--line:#d9d9d9;
+      --font-display:"Cormorant Garamond",Georgia,serif;--font-body:"Archivo","Segoe UI",system-ui,sans-serif}
+    *{box-sizing:border-box;margin:0}
+    body{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;
+      gap:24px;padding:32px;text-align:center;font-family:var(--font-body);color:var(--ink);background:var(--paper)}
+    .code{font-family:var(--font-display);font-size:clamp(5rem,20vw,10rem);line-height:1;letter-spacing:-.02em}
+    .code em{font-style:italic;color:var(--slate)}
+    h1{font-family:var(--font-display);font-size:clamp(1.5rem,5vw,2.25rem);font-weight:500}
+    p{max-width:42ch;color:var(--slate);line-height:1.6}
+    .actions{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin-top:8px}
+    .btn{display:inline-flex;align-items:center;min-height:48px;padding:12px 28px;font-weight:500;
+      text-decoration:none;border:1px solid var(--ink);border-radius:999px;transition:transform .2s,box-shadow .2s}
+    .btn:hover{transform:scale(1.02)}
+    .btn-primary{background:var(--ink);color:var(--paper)}
+    .btn-ghost{background:var(--paper);color:var(--ink)}
+    :focus-visible{outline:2px solid var(--ink);outline-offset:3px}
+    @media(prefers-reduced-motion:reduce){*{transition:none!important}}
+  </style>
+</head>
+<body>
+  <p class="code">4<em>0</em>4</p>
+  <h1>Cette page s'est égarée.</h1>
+  <p>Le lien est peut-être ancien, ou l'adresse contient une erreur. Revenez à la collection pour retrouver votre montre.</p>
+  <div class="actions">
+    <a class="btn btn-primary" href="/">Retour à l'accueil</a>
+    <a class="btn btn-ghost" href="/#collection">Voir la collection</a>
+  </div>
+</body>
+</html>

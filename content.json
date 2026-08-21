@@ -1,0 +1,151 @@
+{
+  "whatsappNumber": "212617753569",
+  "productCta": "اطلب عبر واتساب",
+  "waMessage": "Bonjour VELIRA,\n\nJe souhaite commander cette montre :\n\n⌚ Modèle : {produit}\n💰 Prix : {prix}\n🔗 {url}\n\nMerci de me confirmer la disponibilité et les modalités de livraison.\n\nCordialement.",
+  "contact": {
+    "email": "contact@velira.ma",
+    "instagram": "https://www.instagram.com/velira_watches",
+    "facebook": "https://www.facebook.com/profile.php?id=61580842611564",
+    "tiktok": ""
+  },
+  "seo": {
+    "title": "VELIRA — ساعات فولاذية بتصميم بسيط | الدفع عند الاستلام",
+    "description": "VELIRA تصمّم ساعات أساسية: فولاذ 316L، حركة دقيقة، ضمان سنتين. الدفع عند الاستلام في جميع أنحاء المغرب، إرجاع مجاني خلال 14 يومًا."
+  },
+  "logo": {
+    "src": null,
+    "alt": "VELIRA Watches"
+  },
+  "headerCta": "اطلب الآن",
+  "nav": ["المجموعة", "اتصل بنا"],
+  "trustBar": {
+    "score": "4.8/5",
+    "count": "أكثر من 1,200 عميل",
+    "items": ["الدفع عند الاستلام", "توصيل لجميع أنحاء المغرب", "ضمان سنتين"]
+  },
+  "sections": {
+    "collection": { "eyebrow": "المجموعة", "title": "تسع ساعات. بلا تنازل." }
+  },
+  "hero": {
+    "eyebrow": "مجموعة جديدة — فولاذ 316L",
+    "titleMain": "الوقت،",
+    "titleItalic": "في أنقى صوره.",
+    "sub": "ساعات أساسية من الفولاذ المصقول، صُمّمت لتدوم. لا شيء زائد — فقط الوقت، بأناقة.",
+    "ctaPrimary": "اطلب عبر واتساب",
+    "ctaSecondary": "اكتشف المجموعة",
+    "trustLine": "الدفع عند الاستلام · توصيل خلال 24–48 ساعة · إرجاع مجاني 14 يومًا",
+    "image": { "src": null, "alt": "ساعة VELIRA من الفولاذ المصقول، عرض أمامي على خلفية بيضاء" }
+  },
+  "products": [
+    {
+      "id": "origine",
+      "name": "Origine",
+      "desc": "ميناء فضي · 39 مم",
+      "price": 349,
+      "badge": "الأكثر مبيعًا",
+      "imgFront": null,
+      "imgHover": null
+    },
+    {
+      "id": "eclipse",
+      "name": "Éclipse",
+      "desc": "أسود بالكامل · 40 مم",
+      "price": 429,
+      "badge": null,
+      "imgFront": null,
+      "imgHover": null
+    },
+    {
+      "id": "heritage",
+      "name": "Héritage",
+      "desc": "رمادي أردوازي · 41 مم",
+      "price": 399,
+      "badge": null,
+      "imgFront": null,
+      "imgHover": null
+    },
+    {
+      "id": "rive",
+      "name": "Rive",
+      "desc": "أبيض عاجي · 38 مم",
+      "price": 379,
+      "badge": null,
+      "imgFront": null,
+      "imgHover": null
+    },
+    {
+      "id": "meridien",
+      "name": "Méridien",
+      "desc": "ميناء مدخّن · 40 مم",
+      "price": 419,
+      "badge": null,
+      "imgFront": null,
+      "imgHover": null
+    },
+    {
+      "id": "sable",
+      "name": "Sable",
+      "desc": "رمادي رملي غير لامع · 38 مم",
+      "price": 359,
+      "badge": null,
+      "imgFront": null,
+      "imgHover": null
+    },
+    {
+      "id": "nocturne",
+      "name": "Nocturne",
+      "desc": "أسود عميق · 39 مم",
+      "price": 409,
+      "badge": null,
+      "imgFront": null,
+      "imgHover": null
+    },
+    {
+      "id": "atlas",
+      "name": "Atlas",
+      "desc": "رمادي جرانيتي · 42 مم",
+      "price": 439,
+      "badge": null,
+      "imgFront": null,
+      "imgHover": null
+    },
+    {
+      "id": "aube",
+      "name": "Aube",
+      "desc": "أبيض نقي · 36 مم",
+      "price": 339,
+      "badge": null,
+      "imgFront": null,
+      "imgHover": null
+    }
+  ],
+  "reviews": [],
+  "faq": [],
+  "finalCta": {
+    "eyebrow": "جاهزة للارتداء",
+    "title": "ساعتك VELIRA بانتظارك.",
+    "sub": "اطلب برسالة واحدة. ادفع عند الاستلام.",
+    "button": "اطلب الآن",
+    "trustLine": "الدفع عند الاستلام · إرجاع مجاني 14 يومًا · ضمان سنتين"
+  },
+  "footer": {
+    "tagline": "ساعات أساسية، صُمّمت لتدوم.",
+    "clockLabel": "توقيت VELIRA",
+    "collectionTitle": "المجموعة",
+    "helpTitle": "المساعدة",
+    "helpLinks": ["التوصيل والدفع", "الإرجاع والاستبدال", "الضمان", "اتصل بنا"],
+    "newsletterTitle": "ابقَ على اطلاع",
+    "newsletterText": "جديد المجموعات والإصدارات المحدودة، مرة في الشهر. لا أكثر.",
+    "newsletterLabel": "بريدك الإلكتروني",
+    "newsletterPlaceholder": "nom@exemple.com",
+    "newsletterButton": "اشترك",
+    "newsletterSuccess": "شكرًا — تم تسجيلك بنجاح.",
+    "newsletterError": "أدخل بريدًا إلكترونيًا صحيحًا.",
+    "copyright": "VELIRA. جميع الحقوق محفوظة.",
+    "legalLinks": [
+      { "label": "الإشعارات القانونية", "href": "/mentions-legales.html" },
+      { "label": "الخصوصية", "href": "/confidentialite.html" },
+      { "label": "الشروط العامة", "href": "/cgv.html" }
+    ]
+  }
+}

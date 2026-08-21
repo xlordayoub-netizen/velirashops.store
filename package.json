@@ -1,0 +1,1 @@
+{"name":"velira-site","private":true,"type":"module","scripts":{"build":"node tools/build.mjs","fonts":"node tools/fetch-fonts.mjs"},"devDependencies":{"esbuild":"^0.28.1","subset-font":"^2.5.0"}}

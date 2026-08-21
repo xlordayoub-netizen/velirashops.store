@@ -1,0 +1,2 @@
+# Netlify : le Studio est une SPA — toutes ses routes servent son index.html
+/studio/*  /studio/index.html  200
