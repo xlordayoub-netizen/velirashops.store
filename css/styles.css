@@ -383,9 +383,9 @@ a { color: inherit; }
 .product-grid {
   display: grid;
   gap: 14px;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
-@media (min-width: 1024px) { .product-grid { grid-template-columns: repeat(4, 1fr); gap: 14px; } }
+@media (min-width: 1024px) { .product-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; } }
 
 .product-card {
   border: 1px solid var(--line);
@@ -494,9 +494,9 @@ a { color: inherit; }
 .review-grid {
   display: grid;
   gap: var(--s-3);
-  grid-template-columns: 1fr;
+  grid-template-columns: minmax(0, 1fr);
 }
-@media (min-width: 860px) { .review-grid { grid-template-columns: repeat(3, 1fr); } }
+@media (min-width: 860px) { .review-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 
 .review-card {
   display: flex;
@@ -617,9 +617,13 @@ a { color: inherit; }
    palier — pas de colonne orpheline ni de vide quand une liste s'allonge.
    Mobile : 1 colonne · Tablette : 2 colonnes (marque et newsletter en
    pleine largeur) · Desktop : 4 colonnes. */
+/* `minmax(0, …)` et non `1fr` : la taille minimale automatique d'une piste
+   `1fr` vaut min-content, donc la colonne ne pouvait pas descendre sous les
+   340px de min-content du formulaire newsletter — la grille débordait de
+   35px sous 360px de large. `minmax(0, …)` autorise la piste à rétrécir. */
 .footer-grid {
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: minmax(0, 1fr);
   grid-template-areas:
     "brand"
     "collection"
@@ -631,7 +635,7 @@ a { color: inherit; }
 }
 @media (min-width: 700px) {
   .footer-grid {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     grid-template-areas:
       "brand brand"
       "collection help"
@@ -641,7 +645,7 @@ a { color: inherit; }
 }
 @media (min-width: 1024px) {
   .footer-grid {
-    grid-template-columns: 1.4fr 0.8fr 0.8fr 1.4fr;
+    grid-template-columns: minmax(0, 1.4fr) minmax(0, 0.8fr) minmax(0, 0.8fr) minmax(0, 1.4fr);
     grid-template-areas: "brand collection help news";
   }
 }
@@ -858,13 +862,13 @@ ul.socials {
 .contact-grid {
   display: grid;
   gap: var(--s-4);
-  grid-template-columns: 1fr;
+  grid-template-columns: minmax(0, 1fr);
   max-width: 720px;
   margin-inline: auto;
   margin-top: var(--s-6);
 }
 @media (min-width: 700px) {
-  .contact-grid { grid-template-columns: 1fr 1fr; }
+  .contact-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
 }
 .contact-card {
   display: flex;
