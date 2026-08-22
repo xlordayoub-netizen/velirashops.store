@@ -11,7 +11,7 @@
   const FALLBACK_WHATSAPP = "212617753569";
   let whatsappNumber = FALLBACK_WHATSAPP;
   let waMessage =
-    "Bonjour VELIRA,\n\nJe souhaite commander cette montre :\n\n⌚ Modèle : {produit}\n💰 Prix : {prix}\n🔗 {url}\n\nMerci de me confirmer la disponibilité et les modalités de livraison.\n\nCordialement.";
+    "مرحبًا VELIRA،\n\nأرغب في طلب هذه الساعة:\n\n⌚ الموديل: {produit}\n💰 السعر: {prix}\n🔗 {url}\n\nيرجى تأكيد التوفر وطرق التوصيل.\n\nمع خالص التحية.";
   let productCtaLabel = "اطلب عبر واتساب";
   let newsletterMsgs = {
     success: "شكرًا — تم تسجيلك بنجاح.",
@@ -383,7 +383,7 @@
 
   function initWhatsAppLinks() {
     document.querySelectorAll(".js-wa").forEach((link) => {
-      const product = link.dataset.product || "Collection VELIRA";
+      const product = link.dataset.product || "مجموعة VELIRA";
       /* data-slug présent = carte produit → URL /produits/<slug> incluse
          dans le message (aperçu photo côté WhatsApp). CTA génériques :
          pas de ligne prix/lien. */

@@ -1,7 +1,7 @@
 {
   "whatsappNumber": "212617753569",
   "productCta": "اطلب عبر واتساب",
-  "waMessage": "Bonjour VELIRA,\n\nJe souhaite commander cette montre :\n\n⌚ Modèle : {produit}\n💰 Prix : {prix}\n🔗 {url}\n\nMerci de me confirmer la disponibilité et les modalités de livraison.\n\nCordialement.",
+  "waMessage": "مرحبًا VELIRA،\n\nأرغب في طلب هذه الساعة:\n\n⌚ الموديل: {produit}\n💰 السعر: {prix}\n🔗 {url}\n\nيرجى تأكيد التوفر وطرق التوصيل.\n\nمع خالص التحية.",
   "contact": {
     "email": "contact@velira.ma",
     "instagram": "https://www.instagram.com/velira_watches",
@@ -17,14 +17,24 @@
     "alt": "VELIRA Watches"
   },
   "headerCta": "اطلب الآن",
-  "nav": ["المجموعة", "اتصل بنا"],
+  "nav": [
+    "المجموعة",
+    "اتصل بنا"
+  ],
   "trustBar": {
     "score": "4.8/5",
     "count": "أكثر من 1,200 عميل",
-    "items": ["الدفع عند الاستلام", "توصيل لجميع أنحاء المغرب", "ضمان سنتين"]
+    "items": [
+      "الدفع عند الاستلام",
+      "توصيل لجميع أنحاء المغرب",
+      "ضمان سنتين"
+    ]
   },
   "sections": {
-    "collection": { "eyebrow": "المجموعة", "title": "تسع ساعات. بلا تنازل." }
+    "collection": {
+      "eyebrow": "المجموعة",
+      "title": "تسع ساعات. بلا تنازل."
+    }
   },
   "hero": {
     "eyebrow": "مجموعة جديدة — فولاذ 316L",
@@ -34,7 +44,10 @@
     "ctaPrimary": "اطلب عبر واتساب",
     "ctaSecondary": "اكتشف المجموعة",
     "trustLine": "الدفع عند الاستلام · توصيل خلال 24–48 ساعة · إرجاع مجاني 14 يومًا",
-    "image": { "src": null, "alt": "ساعة VELIRA من الفولاذ المصقول، عرض أمامي على خلفية بيضاء" }
+    "image": {
+      "src": null,
+      "alt": "ساعة VELIRA من الفولاذ المصقول، عرض أمامي على خلفية بيضاء"
+    }
   },
   "products": [
     {
@@ -133,19 +146,33 @@
     "clockLabel": "توقيت VELIRA",
     "collectionTitle": "المجموعة",
     "helpTitle": "المساعدة",
-    "helpLinks": ["التوصيل والدفع", "الإرجاع والاستبدال", "الضمان", "اتصل بنا"],
+    "helpLinks": [
+      "التوصيل والدفع",
+      "الإرجاع والاستبدال",
+      "الضمان",
+      "اتصل بنا"
+    ],
     "newsletterTitle": "ابقَ على اطلاع",
     "newsletterText": "جديد المجموعات والإصدارات المحدودة، مرة في الشهر. لا أكثر.",
     "newsletterLabel": "بريدك الإلكتروني",
-    "newsletterPlaceholder": "nom@exemple.com",
+    "newsletterPlaceholder": "name@example.com",
     "newsletterButton": "اشترك",
     "newsletterSuccess": "شكرًا — تم تسجيلك بنجاح.",
     "newsletterError": "أدخل بريدًا إلكترونيًا صحيحًا.",
     "copyright": "VELIRA. جميع الحقوق محفوظة.",
     "legalLinks": [
-      { "label": "الإشعارات القانونية", "href": "/mentions-legales.html" },
-      { "label": "الخصوصية", "href": "/confidentialite.html" },
-      { "label": "الشروط العامة", "href": "/cgv.html" }
+      {
+        "label": "الإشعارات القانونية",
+        "href": "/mentions-legales.html"
+      },
+      {
+        "label": "الخصوصية",
+        "href": "/confidentialite.html"
+      },
+      {
+        "label": "الشروط العامة",
+        "href": "/cgv.html"
+      }
     ]
   }
 }
