@@ -813,7 +813,7 @@
      pour que Google voie toujours les vrais noms et prix. */
   function injectProductSchema(c) {
     if (!Array.isArray(c.products) || !c.products.length) return;
-    const origin = location.origin.startsWith("http") ? location.origin + "/" : "https://velira.ma/";
+    const origin = location.origin.startsWith("http") ? location.origin + "/" : "https://velirashops.store/";
     const schema = {
       "@context": "https://schema.org",
       "@type": "ItemList",

@@ -8,7 +8,7 @@ import {readFile, writeFile} from 'node:fs/promises'
 
 const FILE = new URL('../index.html', import.meta.url)
 const PHONE = '212617753569'
-const SITE = 'https://velira.ma'
+const SITE = 'https://velirashops.store'
 
 const slugFor = (name) =>
   name.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '')

@@ -2,4 +2,4 @@ User-agent: *
 Allow: /
 Disallow: /studio/
 
-Sitemap: https://velira.ma/sitemap.xml
+Sitemap: https://velirashops.store/sitemap.xml
