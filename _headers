@@ -9,7 +9,7 @@
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: geolocation=(), microphone=(), camera=(), payment=()
   Cross-Origin-Opener-Policy: same-origin
-  Content-Security-Policy: default-src 'self'; script-src 'self' https://*.googletagmanager.com __INLINE_SCRIPT_HASHES__; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://cdn.sanity.io https://*.google-analytics.com https://*.googletagmanager.com; font-src 'self'; connect-src 'self' https://dvss1you.apicdn.sanity.io https://dvss1you.api.sanity.io https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com; form-action 'self'; frame-ancestors 'none'; base-uri 'self'; object-src 'none'; upgrade-insecure-requests
+  Content-Security-Policy: default-src 'self'; script-src 'self' https://*.googletagmanager.com https://connect.facebook.net __INLINE_SCRIPT_HASHES__; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://cdn.sanity.io https://*.google-analytics.com https://*.googletagmanager.com https://www.facebook.com; font-src 'self'; connect-src 'self' https://dvss1you.apicdn.sanity.io https://dvss1you.api.sanity.io https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com https://www.facebook.com; form-action 'self'; frame-ancestors 'none'; base-uri 'self'; object-src 'none'; upgrade-insecure-requests
 
 # ---- HTML : toujours revalidé (contenu et liens toujours frais) ----
 /
