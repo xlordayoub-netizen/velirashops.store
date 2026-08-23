@@ -65,6 +65,106 @@
       }, true);
     })();
   </script>
+  <!-- TikTok — évènements catalogue (ViewContent / AddToCart / InitiateCheckout) -->
+  <script>
+    (function () {
+      var CURRENCY = 'MAD';
+      var SEL = 'a.js-wa[data-slug]';
+
+      /* Les fiches produit portent déjà tout le nécessaire :
+         data-slug (identifiant), data-product (nom), data-price (« 349 DH »). */
+      function payload(a) {
+        var price = parseFloat(String(a.getAttribute('data-price') || '').replace(',', '.').replace(/[^\d.]/g, ''));
+        var d = {
+          content_id: a.getAttribute('data-slug') || '',
+          content_type: 'product',
+          content_name: a.getAttribute('data-product') || '',
+          currency: CURRENCY
+        };
+        if (!isNaN(price)) d.value = price;
+        return d;
+      }
+      function fire(name, d) { if (window.ttq && ttq.track) ttq.track(name, d); }
+
+      /* ---------- ViewContent : une seule fois par produit et par page vue ---------- */
+      var seen = {};
+      function view(a) {
+        var id = a.getAttribute('data-slug');
+        if (!id || seen[id]) return;
+        seen[id] = 1;
+        fire('ViewContent', payload(a));
+      }
+
+      /* Lien profond /#produit-<slug> : arrivée depuis un partage WhatsApp
+         ou Facebook, les pages /produits/<slug> y redirigeant. */
+      function fromHash() {
+        var m = /^#produit-(.+)$/.exec(location.hash || '');
+        if (!m) return;
+        var card = document.getElementById('produit-' + m[1]);
+        var a = card && card.querySelector(SEL);
+        if (a) view(a);
+      }
+
+      /* Consultation réelle : fiche visible à 50 % pendant 1 s. Le délai
+         évite de compter un simple défilement rapide comme une consultation. */
+      var io = null, timers = new WeakMap();
+      if (window.IntersectionObserver) {
+        io = new IntersectionObserver(function (entries) {
+          for (var i = 0; i < entries.length; i++) {
+            var en = entries[i];
+            var a = en.target.querySelector(SEL);
+            if (!a) continue;
+            if (en.isIntersecting) {
+              if (!timers.has(en.target)) {
+                timers.set(en.target, setTimeout(function (link) {
+                  return function () { view(link); };
+                }(a), 1000));
+              }
+            } else if (timers.has(en.target)) {
+              clearTimeout(timers.get(en.target));
+              timers['delete'](en.target);
+            }
+          }
+        }, { threshold: 0.5 });
+      }
+      function scan() {
+        if (!io) return;
+        var cards = document.querySelectorAll('li.product-card');
+        for (var i = 0; i < cards.length; i++) io.observe(cards[i]);
+      }
+
+      /* ---------- AddToCart + InitiateCheckout : clic sur une fiche produit ----------
+         Restreint aux CTA produit (data-slug). Le bouton WhatsApp flottant
+         n'en a pas : il continue de ne déclencher que Contact, inchangé.
+         En vente COD via WhatsApp, ajout au panier et passage en commande
+         sont le même geste : les deux évènements partent sur ce clic. */
+      document.addEventListener('click', function (e) {
+        var a = e.target && e.target.closest ? e.target.closest(SEL) : null;
+        if (!a) return;
+        var now = Date.now();
+        if (now - (+a.dataset.ttqCatalog || 0) < 1200) return;
+        a.dataset.ttqCatalog = now;
+        var d = payload(a);
+        fire('AddToCart', d);
+        fire('InitiateCheckout', {
+          content_id: d.content_id, content_type: 'product', value: d.value, currency: CURRENCY
+        });
+      }, true);
+
+      function init() { scan(); fromHash(); }
+      /* La grille est reconstruite après chargement du contenu Sanity :
+         on ré-observe les fiches recréées. */
+      function watch() {
+        var grid = document.getElementById('product-grid');
+        if (!grid || !window.MutationObserver) return;
+        new MutationObserver(function () { scan(); fromHash(); }).observe(grid, { childList: true });
+      }
+      function boot() { init(); watch(); }
+      if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
+      else boot();
+      addEventListener('hashchange', fromHash);
+    })();
+  </script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
