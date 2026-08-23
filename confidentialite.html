@@ -38,6 +38,33 @@
   }(window, document, 'ttq');
   </script>
   <!-- TikTok Pixel Code End -->
+  <!-- TikTok — évènement Contact sur les CTA WhatsApp -->
+  <script>
+    (function () {
+      function isWhatsApp(a) {
+        if (a.classList.contains('js-wa')) return true;
+        var h = a.getAttribute('href');
+        if (!h) return false;
+        try {
+          var host = new URL(h, location.href).hostname.toLowerCase();
+          return host === 'wa.me' || host === 'whatsapp.com' || host.slice(-14) === '.whatsapp.com';
+        } catch (err) {
+          return /(wa\.me|api\.whatsapp\.com)/i.test(h);
+        }
+      }
+      /* Capture : se déclenche avant l'anti-double-appui, donc jamais
+         court-circuité. Fenêtre de 1,2 s alignée sur celle du garde,
+         pour n'envoyer qu'un seul Contact par ouverture WhatsApp. */
+      document.addEventListener('click', function (e) {
+        var a = e.target && e.target.closest ? e.target.closest('a') : null;
+        if (!a || !isWhatsApp(a)) return;
+        var now = Date.now();
+        if (now - (+a.dataset.ttqContact || 0) < 1200) return;
+        a.dataset.ttqContact = now;
+        if (window.ttq && ttq.track) ttq.track('Contact');
+      }, true);
+    })();
+  </script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="سياسة الخصوصية الخاصة بـ VELIRA — ما هي البيانات التي نجمعها عند الطلب وكيف تُستعمل.">
