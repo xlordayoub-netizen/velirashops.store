@@ -26,6 +26,178 @@ await mkdir(DIST, {recursive: true})
 
 const report = []
 
+/* ---------- 0. Contenu Sanity : une seule requête, réutilisée partout ----------
+   Sans cela le HTML servi contient les fiches de démo : le visiteur les voit
+   tant que le fetch client n'a pas répondu (2 à 4 s en 4G), et les garde
+   DÉFINITIVEMENT si Sanity est indisponible ou son quota épuisé — avec des
+   boutons de commande pointant vers des montres inexistantes.
+   On régénère donc ici la grille statique ET content.json depuis la même
+   source. Le fetch client reste en place : il continue d'appliquer les
+   mises à jour publiées après le build.
+   Sanity injoignable au build → on conserve les fichiers existants tels
+   quels : le build n'échoue jamais. */
+const SITE_URL = 'https://velirashops.store'
+const FALLBACK_WHATSAPP = '212617753569'
+const DEFAULT_WA_MESSAGE =
+  'مرحبًا VELIRA،\n\nأرغب في طلب هذه الساعة:\n\n⌚ الموديل: {produit}\n💰 السعر: {prix}\n🔗 {url}\n\nيرجى تأكيد التوفر وطرق التوصيل.\n\nمع خالص التحية.'
+
+/* Identiques aux fonctions de js/main.js : les slugs DOIVENT concorder,
+   sinon data-slug, les ancres #produit-<slug> et les pages OG divergent. */
+const slugFor = (name) =>
+  String(name == null ? '' : name).toLowerCase().normalize('NFD')
+    .replace(/[̀-ͯ]/g, '')
+    .replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'montre'
+
+const escHtml = (s) => String(s == null ? '' : s)
+  .replace(/[&<>"]/g, (c) => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'}[c]))
+
+const isSanityAsset = (src) => typeof src === 'string' && src.includes('cdn.sanity.io')
+const isSvgAsset = (src) => /\.svg($|\?)/i.test(src || '')
+function sanityImg(src, opts) {
+  const o = opts || {}
+  if (!isSanityAsset(src) || isSvgAsset(src)) return src
+  const p = new URLSearchParams()
+  if (o.w) p.set('w', String(Math.round(o.w)))
+  p.set('q', String(o.q == null ? 90 : o.q))
+  p.set('auto', 'format')
+  p.set('fit', o.fit || 'max')
+  return src + (src.includes('?') ? '&' : '?') + p.toString()
+}
+function sanitySrcset(src, widths) {
+  if (!isSanityAsset(src) || isSvgAsset(src)) return ''
+  return widths.map((w) => sanityImg(src, {w}) + ' ' + w + 'w').join(', ')
+}
+const W_PRODUCT = [600, 1200, 1800]
+const SIZES_PRODUCT = '(min-width:1024px) 300px, (min-width:560px) 45vw, 90vw'
+
+function buildWhatsAppUrl(phone, message) {
+  let c = String(phone == null ? '' : phone).replace(/[^0-9]/g, '')
+  if (c.startsWith('00')) c = c.slice(2)
+  else if (c.length === 10 && c.startsWith('0')) c = '212' + c.slice(1)
+  return 'https://wa.me/' + c + '?text=' + encodeURIComponent(message == null ? '' : message)
+}
+/* Même composition que waHrefFor() côté client, lignes vides comprises. */
+function waHrefFor(tpl, phone, product, price, url) {
+  const filled = String(tpl)
+    .replace('{produit}', () => (product == null ? '' : product))
+    .replace('{prix}', () => (price == null ? '' : price))
+    .replace('{url}', () => (url == null ? '' : url))
+  const message = filled.split('\n').filter((line) => {
+    const t = line.trim()
+    const isDetail = /^[⌚💰🔗]/u.test(t)
+    const isEmpty = /:$/.test(t) || /^[⌚💰🔗]$/u.test(t)
+    return !(isDetail && isEmpty)
+  }).join('\n').replace(/\n{3,}/g, '\n\n')
+  return buildWhatsAppUrl(phone, message)
+}
+
+const placeholderSvg = (label, w, h, bg) =>
+  `data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='${w}' height='${h}'%3E%3Crect width='100%25' height='100%25' fill='%23${bg}'/%3E%3Ctext x='50%25' y='50%25' text-anchor='middle' dominant-baseline='middle' font-family='Arial, sans-serif' font-size='34' fill='%23666666'%3E${encodeURIComponent(label)}%3C/text%3E%3C/svg%3E`
+
+/* Le logo WhatsApp est LU dans js/main.js plutôt que recopié ici :
+   une seule définition, donc aucune divergence possible entre la carte
+   rendue au build et celle rendue par le client. */
+const mainJsSource = await readFile(join(ROOT, 'js/main.js'), 'utf8')
+const WA_LOGO_SVG = (mainJsSource.match(/const waLogoSvg\s*=\s*'([^']+)'/) || [])[1] || ''
+
+const SANITY_QUERY = `{
+    "settings": *[_type=="siteSettings"][0]{
+      whatsappNumber, waMessage, productCta, contact, seo, headerCta, nav,
+      trustBar, sections, finalCta, footer,
+      hero{eyebrow, titleMain, titleItalic, sub, ctaPrimary, ctaSecondary, trustLine,
+        "image": {"src": image.asset->url, "alt": image.alt}}
+    },
+    "products": *[_type=="product"]|order(order asc){
+      name, desc, price, badge,
+      "imgFront": imgFront.asset->url, "imgHover": imgHover.asset->url
+    },
+    "reviews": *[_type=="review"]|order(order asc){initials, name, city, model, stars, text},
+    "faq": *[_type=="faqItem"]|order(order asc){question, answer}
+  }`
+
+async function fetchSanity() {
+  try {
+    const url = `https://dvss1you.apicdn.sanity.io/v2024-10-01/data/query/production?query=${encodeURIComponent(SANITY_QUERY)}`
+    const r = await fetch(url)
+    if (!r.ok) return null
+    const {result} = await r.json()
+    if (!result || !Array.isArray(result.products) || !result.products.length) return null
+    return result
+  } catch { return null }
+}
+
+const sanity = await fetchSanity()
+const localContent = JSON.parse(await readFile(join(ROOT, 'content.json'), 'utf8'))
+
+/* Produits retenus : Sanity si joignable, sinon le content.json du dépôt. */
+const catalogue = sanity ? sanity.products : (localContent.products || [])
+const waNumber = (sanity && sanity.settings && sanity.settings.whatsappNumber) || localContent.whatsappNumber || FALLBACK_WHATSAPP
+const waTemplate = (() => {
+  const fromSanity = sanity && sanity.settings && sanity.settings.waMessage
+  if (fromSanity && String(fromSanity).includes('{produit}')) return fromSanity
+  if (localContent.waMessage && String(localContent.waMessage).includes('{produit}')) return localContent.waMessage
+  return DEFAULT_WA_MESSAGE
+})()
+
+/* Grille statique : structure identique à celle produite par main.js, pour
+   que data-slug / data-product / data-price — dont dépend le suivi TikTok
+   (ViewContent, AddToCart, InitiateCheckout) — soient corrects dès le
+   premier octet servi, sans attendre le moindre appel réseau. */
+function productCardHtml(p) {
+  const slug = slugFor(p.name)
+  const front = p.imgFront ? sanityImg(p.imgFront, {w: 1200}) : placeholderSvg(`[IMAGE — ${p.name}]`, 900, 1080, 'F5F5F5')
+  const hover = p.imgHover ? sanityImg(p.imgHover, {w: 1200}) : placeholderSvg(`[AUTRE ANGLE — ${p.name}]`, 900, 1080, 'D9D9D9')
+  const frontSet = sanitySrcset(p.imgFront, W_PRODUCT)
+  const hoverSet = sanitySrcset(p.imgHover, W_PRODUCT)
+  const frontAttrs = frontSet ? ` srcset="${escHtml(frontSet)}" sizes="${SIZES_PRODUCT}"` : ''
+  const hoverAttrs = hoverSet ? ` srcset="${escHtml(hoverSet)}" sizes="${SIZES_PRODUCT}"` : ''
+  const badge = p.badge ? `<span class="product-badge">${escHtml(p.badge)}</span>` : ''
+  const href = waHrefFor(waTemplate, waNumber, `VELIRA ${p.name}`, `${p.price} DH`, `${SITE_URL}/produits/${slug}`)
+  return `
+          <li class="product-card" id="produit-${slug}">
+            <a class="product-link js-wa" href="${escHtml(href)}" target="_blank" rel="noopener noreferrer" data-product="VELIRA ${escHtml(p.name)}" data-price="${escHtml(p.price)} DH" data-slug="${slug}"
+               aria-label="اطلب VELIRA ${escHtml(p.name)}، ${escHtml(p.price)} درهم، عبر واتساب">
+              <figure class="product-media">
+                ${badge}
+                <img class="img-front" src="${escHtml(front)}"${frontAttrs} alt="VELIRA ${escHtml(p.name)} — ${escHtml(p.desc)}" width="900" height="1080" loading="lazy" decoding="async">
+                <img class="img-alt" aria-hidden="true" src="${escHtml(hover)}"${hoverAttrs} alt="" width="900" height="1080" loading="lazy" decoding="async">
+              </figure>
+              <div class="product-meta">
+                <h3 class="product-name">${escHtml(p.name)}</h3>
+                <p class="product-desc">${escHtml(p.desc)}</p>
+                <p class="product-price">${escHtml(p.price)}&nbsp;DH</p>
+                <span class="product-cta">${WA_LOGO_SVG}اطلب<span class="cta-suffix"> عبر واتساب</span></span>
+              </div>
+            </a>
+          </li>`
+}
+const staticGridHtml = catalogue.map(productCardHtml).join('')
+
+/* content.json régénéré : Sanity fait foi champ par champ, les valeurs
+   locales sont conservées là où Sanity ne définit rien (et « logo » n'est
+   jamais pris du CMS — c'est un actif de marque, pas du contenu client). */
+const regeneratedContent = (() => {
+  if (!sanity) return null
+  const s = sanity.settings || {}
+  const out = {...localContent}
+  for (const k of ['whatsappNumber', 'waMessage', 'productCta', 'contact', 'seo',
+                   'headerCta', 'nav', 'trustBar', 'sections', 'finalCta', 'footer', 'hero']) {
+    if (s[k] != null) out[k] = s[k]
+  }
+  out.products = sanity.products.map((p) => ({
+    id: slugFor(p.name),
+    name: p.name,
+    desc: p.desc,
+    price: p.price,
+    badge: p.badge || null,
+    imgFront: p.imgFront || null,
+    imgHover: p.imgHover || null,
+  }))
+  if (Array.isArray(sanity.reviews) && sanity.reviews.length) out.reviews = sanity.reviews
+  if (Array.isArray(sanity.faq) && sanity.faq.length) out.faq = sanity.faq
+  return out
+})()
+
 /* ---------- 1. CSS ---------- */
 const minCss = async (file) => {
   const src = await readFile(join(ROOT, file), 'utf8')
@@ -88,6 +260,17 @@ html = html
   .replace('js/sanity-config.js', `js/${cfgName}`)
   .replace('js/main.js', `js/${mainName}`)
 
+/* Grille produit servie = vrai catalogue. Les fiches de démo du dépôt ne
+   sont remplacées que si Sanity a répondu : hors-ligne, on sert l'existant. */
+if (staticGridHtml) {
+  const before = html
+  html = html.replace(
+    /(<ul class="product-grid" id="product-grid">)[\s\S]*?(<\/ul>)/,
+    (m, open, close) => open + staticGridHtml + '\n        ' + close
+  )
+  if (html === before) console.warn('  ⚠ grille produit introuvable dans index.html — non régénérée')
+}
+
 html = await minifyHtml(html)
 await writeFile(join(DIST, 'index.html'), html)
 report.push({asset: 'index.html', before: htmlBefore, after: kb(html)})
@@ -129,6 +312,11 @@ for (const f of await readdir(join(ROOT, 'fonts'))) {
 for (const f of ['robots.txt', 'sitemap.xml', 'content.json', '_redirects', 'serve.json']) {
   if (existsSync(join(ROOT, f))) await cp(join(ROOT, f), join(DIST, f))
 }
+/* content.json du dépôt écrasé par la version Sanity : le secours hors-ligne
+   décrit alors le vrai catalogue et non les fiches de démo. */
+if (regeneratedContent) {
+  await writeFile(join(DIST, 'content.json'), JSON.stringify(regeneratedContent, null, 2) + '\n')
+}
 
 /* ---------- 4b. CSP : hachage des scripts inline ----------
    La CSP reste stricte (`script-src 'self'`, pas de 'unsafe-inline').
@@ -159,27 +347,9 @@ console.log(`\nCSP : ${inlineScripts.size} script(s) inline haché(s)`)
    Redirection par <meta refresh> UNIQUEMENT (pas de script inline → CSP
    stricte intacte ; le crawler WhatsApp ne suit pas la redirection et
    lit les balises OG). */
-const SITE_URL = 'https://velirashops.store'
-
-const slugFor = (name) =>
-  String(name).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '')
-    .replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'montre'
-
-async function fetchProducts() {
-  try {
-    const q = encodeURIComponent('*[_type=="product"]|order(order asc){name, price, "img": imgFront.asset->url}')
-    const r = await fetch(`https://dvss1you.apicdn.sanity.io/v2024-10-01/data/query/production?query=${q}`)
-    if (r.ok) {
-      const {result} = await r.json()
-      if (Array.isArray(result) && result.length) return result
-    }
-  } catch { /* hors-ligne → secours local */ }
-  const local = JSON.parse(await readFile(join(ROOT, 'content.json'), 'utf8'))
-  return (local.products || []).map((p) => ({name: p.name, price: p.price, img: p.imgFront}))
-}
-
-const escHtml = (s) => String(s).replace(/[&<>"]/g, (c) => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'}[c]))
-const products = await fetchProducts()
+/* Réutilise le catalogue déjà chargé en section 0 : une seule requête
+   Sanity par build. */
+const products = catalogue.map((p) => ({name: p.name, price: p.price, img: p.imgFront}))
 await mkdir(join(DIST, 'produits'), {recursive: true})
 for (const p of products) {
   const slug = slugFor(p.name)
