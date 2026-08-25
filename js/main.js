@@ -157,12 +157,15 @@
     if (c.waMessage && c.waMessage.includes("{produit}")) waMessage = c.waMessage;
     if (c.productCta) productCtaLabel = c.productCta;
 
-    /* SEO : titre d'onglet + meta description */
-    if (c.seo) {
-      if (c.seo.title) document.title = c.seo.title;
-      const meta = document.querySelector('meta[name="description"]');
-      if (meta && c.seo.description) meta.setAttribute("content", c.seo.description);
-    }
+    /* SEO : le HTML statique fait AUTORITÉ, le CMS ne l'écrase plus.
+       Auparavant c.seo remplaçait <title> et la meta description après
+       chargement : Googlebot lisait une valeur au premier passage (HTML
+       servi) et une autre au second (après rendu JS). Résultat : deux
+       titres concurrents pour la même URL, un extrait SERP imprévisible
+       et des signaux de pertinence instables — sans compter la langue
+       qui basculait de l'arabe au français sur un document lang="ar".
+       Ces balises sont désormais figées dans index.html.
+       Pour les modifier, éditer index.html — plus siteSettings.seo. */
 
     /* Navigation (desktop + mobile) : libellés des 4 liens */
     if (Array.isArray(c.nav)) {
