@@ -327,6 +327,26 @@ if (existsSync(join(ROOT, 'contact.html'))) {
   report.push({asset: 'contact.html', before: ctBefore, after: kb(ct)})
 }
 
+/* --- montre-homme-maroc.html : page SEO française (utilise styles.css) ---
+   Le nombre de modèles et la fourchette de prix sont injectés depuis le
+   catalogue Sanity : la page reste exacte quand le catalogue évolue, sans
+   qu'on ait à la rééditer à la main. */
+if (existsSync(join(ROOT, 'montre-homme-maroc.html'))) {
+  let mh = await readFile(join(ROOT, 'montre-homme-maroc.html'), 'utf8')
+  const mhBefore = kb(mh)
+  const prix = catalogue.map((p) => Number(p.price)).filter((n) => !isNaN(n)).sort((a, b) => a - b)
+  mh = mh
+    .replace('<link rel="stylesheet" href="fonts/fonts.css">', `<style>${fontsMin}</style>`)
+    .replace('<link rel="stylesheet" href="css/styles.css">', `<style>${stylesMin}</style>`)
+    .replaceAll('{{NB_MODELES}}', String(catalogue.length))
+    .replaceAll('{{PRIX_MIN}}', String(prix[0] ?? ''))
+    .replaceAll('{{PRIX_MAX}}', String(prix[prix.length - 1] ?? ''))
+  if (mh.includes('{{')) console.warn('  ⚠ marqueur non remplacé dans montre-homme-maroc.html')
+  mh = await minifyHtml(mh)
+  await writeFile(join(DIST, 'montre-homme-maroc.html'), mh)
+  report.push({asset: 'montre-homme-maroc.html', before: mhBefore, after: kb(mh)})
+}
+
 for (const page of ['404.html', 'mentions-legales.html', 'confidentialite.html', 'cgv.html']) {
   if (!existsSync(join(ROOT, page))) continue
   let p = await readFile(join(ROOT, page), 'utf8')
