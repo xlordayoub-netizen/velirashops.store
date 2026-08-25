@@ -824,20 +824,32 @@
         "@type": "Product",
         position: i + 1,
         name: "VELIRA " + p.name,
-        description: p.desc,
+        description: p.desc || "VELIRA " + p.name,
         image: p.imgFront || undefined,
+        /* Ancre de la fiche sur l'accueil : la page réellement indexable.
+           /produits/<slug> est en noindex, y renvoyer serait incohérent. */
+        url: origin + "#produit-" + slugFor(p.name),
         brand: { "@id": origin + "#brand" },
         offers: {
           "@type": "Offer",
           price: String(p.price),
           priceCurrency: "MAD",
           availability: "https://schema.org/InStock",
+          url: origin + "#produit-" + slugFor(p.name),
         },
       })),
     };
-    const s = document.createElement("script");
-    s.type = "application/ld+json";
+    /* REMPLACE le bloc posé au build au lieu d'en ajouter un second.
+       Auparavant chaque appel faisait appendChild : render() étant invoqué
+       deux fois (cache puis rafraîchissement), la page se retrouvait avec
+       deux ItemList concurrents dans le <head>. */
+    let s = document.getElementById("velira-products-schema");
+    if (!s) {
+      s = document.createElement("script");
+      s.type = "application/ld+json";
+      s.id = "velira-products-schema";
+      document.head.appendChild(s);
+    }
     s.textContent = JSON.stringify(schema);
-    document.head.appendChild(s);
   }
 })();

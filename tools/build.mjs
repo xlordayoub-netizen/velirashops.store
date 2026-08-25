@@ -173,6 +173,35 @@ function productCardHtml(p) {
 }
 const staticGridHtml = catalogue.map(productCardHtml).join('')
 
+/* Schéma produit servi en dur : Googlebot le lit au premier passage, sans
+   attendre le rendu JS. « url » pointe vers l'ancre de la fiche sur
+   l'accueil — la page réellement indexable — et non vers /produits/<slug>
+   qui est en noindex. Aucune note ni avis n'est déclaré : le site n'en
+   collecte pas, en inventer serait une violation des règles Google. */
+const productSchemaJson = catalogue.length ? JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'ItemList',
+  itemListElement: catalogue.map((p, i) => {
+    const slug = slugFor(p.name)
+    return {
+      '@type': 'Product',
+      position: i + 1,
+      name: `VELIRA ${p.name}`,
+      description: p.desc || `VELIRA ${p.name}`,
+      image: p.imgFront ? sanityImg(p.imgFront, {w: 1200}) : `${SITE_URL}/images/og-cover.jpg`,
+      url: `${SITE_URL}/#produit-${slug}`,
+      brand: {'@id': `${SITE_URL}/#brand`},
+      offers: {
+        '@type': 'Offer',
+        price: String(p.price),
+        priceCurrency: 'MAD',
+        availability: 'https://schema.org/InStock',
+        url: `${SITE_URL}/#produit-${slug}`,
+      },
+    }
+  }),
+}) : ''
+
 /* content.json régénéré : Sanity fait foi champ par champ, les valeurs
    locales sont conservées là où Sanity ne définit rien (et « logo » n'est
    jamais pris du CMS — c'est un actif de marque, pas du contenu client). */
@@ -271,6 +300,16 @@ if (staticGridHtml) {
   if (html === before) console.warn('  ⚠ grille produit introuvable dans index.html — non régénérée')
 }
 
+/* Remplit le bloc JSON-LD catalogue (placeholder vide dans la source). */
+if (productSchemaJson) {
+  const before = html
+  html = html.replace(
+    /(<script type="application\/ld\+json" id="velira-products-schema">)[\s\S]*?(<\/script>)/,
+    (m, open, close) => open + productSchemaJson + close
+  )
+  if (html === before) console.warn('  ⚠ bloc schéma produit introuvable — non rempli')
+}
+
 html = await minifyHtml(html)
 await writeFile(join(DIST, 'index.html'), html)
 report.push({asset: 'index.html', before: htmlBefore, after: kb(html)})
@@ -326,8 +365,13 @@ const inlineScripts = new Set()
 for (const page of await readdir(DIST)) {
   if (extname(page) !== '.html') continue
   const content = await readFile(join(DIST, page), 'utf8')
-  for (const m of content.matchAll(/<script(?![^>]*\bsrc=)[^>]*>([\s\S]*?)<\/script>/gi)) {
-    if (m[1].trim()) inlineScripts.add(m[1])
+  for (const m of content.matchAll(/<script(?![^>]*\bsrc=)([^>]*)>([\s\S]*?)<\/script>/gi)) {
+    /* Les blocs application/ld+json ne sont JAMAIS exécutés par le
+       navigateur : script-src ne s'y applique pas. Les hacher gonflerait
+       l'en-tête CSP à chaque donnée structurée ajoutée, sans rien
+       autoriser d'utile. */
+    if (/type\s*=\s*["']application\/ld\+json["']/i.test(m[1])) continue
+    if (m[2].trim()) inlineScripts.add(m[2])
   }
 }
 const hashes = [...inlineScripts]

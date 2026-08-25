@@ -223,6 +223,11 @@
     "url": "https://velirashops.store/"
   }
   </script>
+  <!-- Catalogue produit : rempli au build depuis Sanity, pour que Googlebot
+       le lise dès le premier passage sans dépendre du rendu JavaScript.
+       L'id permet à main.js de REMPLACER ce bloc au lieu d'en empiler un
+       second quand le contenu est rafraîchi. -->
+  <script type="application/ld+json" id="velira-products-schema">{"@context":"https://schema.org","@type":"ItemList","itemListElement":[]}</script>
 </head>
 <body>
 
